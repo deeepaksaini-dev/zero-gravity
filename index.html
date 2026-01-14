@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero-Gravity | Explore the Beyond</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --accent: #00f2ff;
+            --accent-purple: #7000ff;
+            --bg-deep: #020617;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-deep);
+            color: white;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Animations & Background --- */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at bottom, #0c1120 0%, #020617 100%);
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+        }
+
+        .shooting-star {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(-45deg, #5f91ff, rgba(0, 0, 255, 0));
+            filter: drop-shadow(0 0 6px #699bff);
+            animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
+        }
+
+        @keyframes tail {
+            0% { width: 0; }
+            30% { width: 100px; }
+            100% { width: 0; }
+        }
+
+        @keyframes shooting {
+            0% { transform: translateX(0) translateY(0) rotate(45deg); }
+            100% { transform: translateX(-1000px) translateY(1000px) rotate(45deg); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 242, 255, 0.1);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+        }
+
+        .nav-glass {
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .float-anim {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-text {
+            background: linear-gradient(to right, #fff 30%, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent), var(--accent-purple));
+            box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 242, 255, 0.5);
+        }
+
+        .active-link {
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="stars" class="stars-container"></div>
+    <div id="shooting-stars"></div>
+
+    <nav class="nav-glass fixed top-0 w-full z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2 cursor-pointer group" onclick="navigateTo('home')">
+                <div class="w-10 h-10 bg-gradient-to-tr from-cyan-500 to-purple-600 rounded-full flex items-center justify-center transition group-hover:rotate-[360deg] duration-700 shadow-lg">
+                    <i class="fas fa-rocket text-white"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tighter uppercase text-white">Zero-Gravity</span>
+            </div>
+
+            <ul class="hidden md:flex space-x-8 font-medium uppercase text-xs tracking-[0.2em]">
+                <li><button onclick="navigateTo('home')" class="nav-link hover:text-cyan-400 transition" id="link-home">Home</button></li>
+                <li><button onclick="navigateTo('destinations')" class="nav-link hover:text-cyan-400 transition" id="link-destinations">Destinations</button></li>
+                <li><button onclick="navigateTo('fleet')" class="nav-link hover:text-cyan-400 transition" id="link-fleet">Fleet</button></li>
+                <li><button onclick="navigateTo('training')" class="nav-link hover:text-cyan-400 transition" id="link-training">Training</button></li>
+                <li><button onclick="navigateTo('booking')" class="nav-link hover:text-cyan-400 transition" id="link-booking">Book Orbit</button></li>
+            </ul>
+
+            <button class="md:hidden text-2xl text-white" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div id="mobile-menu" class="fixed inset-0 bg-slate-950/95 backdrop-blur-xl z-[60] flex flex-col items-center justify-center space-y-8 text-2xl uppercase tracking-widest transition-all duration-500 translate-x-full text-white">
+        <button class="absolute top-8 right-8 text-4xl" onclick="toggleMobileMenu()">&times;</button>
+        <button onclick="navigateTo('home'); toggleMobileMenu()">Home</button>
+        <button onclick="navigateTo('destinations'); toggleMobileMenu()">Destinations</button>
+        <button onclick="navigateTo('fleet'); toggleMobileMenu()">Fleet</button>
+        <button onclick="navigateTo('training'); toggleMobileMenu()">Training</button>
+        <button onclick="navigateTo('booking'); toggleMobileMenu()">Book Orbit</button>
+    </div>
+
+    <main id="content" class="pt-32 pb-12 px-6 max-w-7xl mx-auto min-h-screen">
+        <!-- Content gets injected here -->
+    </main>
+
+    <footer class="border-t border-slate-800/50 py-12 px-6 text-center mt-20 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center opacity-70 text-sm">
+            <p>&copy; 2026 Zero-Gravity Exploration. Designed for the future.</p>
+            <div class="mt-6 md:mt-0 flex items-center space-x-2">
+                <span class="tracking-[0.3em] uppercase text-[10px] font-bold">Designed and created by</span>
+                <span class="text-cyan-400 font-black text-lg tracking-widest">DSX</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function initBackground() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${2 + Math.random() * 4}s`);
+                starsContainer.appendChild(star);
+            }
+
+            setInterval(() => {
+                const container = document.getElementById('shooting-stars');
+                const star = document.createElement('div');
+                star.className = 'shooting-star';
+                star.style.top = `${Math.random() * 50}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                container.appendChild(star);
+                setTimeout(() => star.remove(), 3000);
+            }, 5000);
+        }
+
+        function handleReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const revealTop = el.getBoundingClientRect().top;
+                if (revealTop < windowHeight - 50) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', handleReveal);
+
+        function navigateTo(page) {
+            const content = document.getElementById('content');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active-link'));
+            const activeLink = document.getElementById(`link-${page}`);
+            if (activeLink) activeLink.classList.add('active-link');
+
+            switch(page) {
+                case 'home':
+                    content.innerHTML = `
+                        <div class="reveal active">
+                            <section class="flex flex-col md:flex-row items-center justify-between gap-16 py-8">
+                                <div class="md:w-3/5 space-y-8">
+                                    <div class="inline-block px-4 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/5 text-cyan-400 text-xs font-bold tracking-widest uppercase">
+                                        The Next Era of Travel
+                                    </div>
+                                    <h1 class="text-6xl md:text-8xl font-black leading-[1.1] hero-text uppercase">Explore <br>The Beyond.</h1>
+                                    <p class="text-slate-400 text-xl leading-relaxed max-w-xl">
+                                        Witness the world from above. Experience the absolute silence of the void and the eternal shimmer of the stars with Zero-Gravity luxury spaceflight.
+                                    </p>
+                                    <div class="flex flex-wrap gap-4 pt-4">
+                                        <button onclick="navigateTo('booking')" class="btn-primary px-10 py-5 rounded-full font-bold uppercase tracking-widest text-xs">Book Your Flight</button>
+                                        <button onclick="navigateTo('destinations')" class="group flex items-center space-x-3 px-8 py-5 rounded-full border border-slate-700 hover:border-cyan-400 transition text-xs uppercase font-bold tracking-widest">
+                                            <span>Explore Destinations</span>
+                                            <i class="fas fa-arrow-right transition group-hover:translate-x-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="md:w-2/5 relative float-anim">
+                                    <div class="absolute -inset-10 bg-cyan-600/20 blur-[100px] rounded-full"></div>
+                                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1000" 
+                                         alt="Realistic Earth from Space" 
+                                         class="relative rounded-[2rem] shadow-2xl border border-white/10 z-10">
+                                </div>
+                            </section>
+                            
+                            <section class="mt-32 grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
+                                <div class="glass p-10 space-y-6">
+                                    <div class="w-14 h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center">
+                                        <i class="fas fa-microchip text-2xl text-cyan-400"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold">Neural Flight-Deck</h3>
+                                    <p class="text-slate-400 leading-relaxed">AI-integrated flight systems ensure 99.9% safety and precision during reentry.</p>
+                                </div>
+                                <div class="glass p-10 space-y-6">
+                                    <div class="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center">
+                                        <i class="fas fa-user-astronaut text-2xl text-purple-400"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold">Expert Guidance</h3>
+                                    <p class="text-slate-400 leading-relaxed">Certified NASA-trained flight directors oversee every second of your journey.</p>
+                                </div>
+                                <div class="glass p-10 space-y-6">
+                                    <div class="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center">
+                                        <i class="fas fa-earth-americas text-2xl text-blue-400"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold">Strategic Launch</h3>
+                                    <p class="text-slate-400 leading-relaxed">Access the stars from premier spaceports in Dubai, Texas, and Cape Canaveral.</p>
+                                </div>
+                            </section>
+                        </div>
+                    `;
+                    break;
+
+                case 'destinations':
+                    content.innerHTML = `
+                        <div class="space-y-16">
+                            <div class="text-center space-y-4 reveal">
+                                <h2 class="text-5xl md:text-7xl font-black uppercase tracking-tighter text-cyan-400">New Worlds</h2>
+                                <p class="text-slate-400 max-w-2xl mx-auto">Discover extraterrestrial luxury across the solar system with our premium orbital routes.</p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                                ${renderDest('Orbit Station One', '6h duration', '$199k', 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=800', 'Gaze down at the blue marble from our revolving luxury suites in high Earth orbit.')}
+                                ${renderDest('Lunar Base Delta', '3 day cruise', '$1.2M', 'https://images.unsplash.com/photo-1522030239044-12f014136540?auto=format&fit=crop&q=80&w=800', 'Explore massive craters and ancient silver dust at our polar lunar sanctuary.')}
+                                ${renderDest('Mars Colony X', '6 month trek', '$8.5M', 'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=800', 'Pioneer humanity on the Red Planet under the glow of Phobos and Deimos.')}
+                                ${renderDest('Europa Icy Depths', '14 month trek', '$15.2M', 'https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?auto=format&fit=crop&q=80&w=800', 'Witness Jupiter\'s massive eye from the crystalline surface of the frozen moon Europa.')}
+                                ${renderDest('Saturn Ring View', '2 year trek', '$24.5M', 'https://images.unsplash.com/photo-1614732484003-ef9881555dc3?auto=format&fit=crop&q=80&w=800', 'Orbit the majestic rings of Saturn in a specialized panoramic observation deck.')}
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'fleet':
+                    content.innerHTML = `
+                        <div class="space-y-16">
+                            <h2 class="text-5xl font-black text-center uppercase reveal text-cyan-400">Our Space Fleet</h2>
+                            <div class="grid grid-cols-1 gap-12">
+                                ${renderShip('Starship X', 'NASA Next-Gen System', 'https://images.unsplash.com/photo-1516849841032-87cbac2d88c7?auto=format&fit=crop&q=80&w=1000', 'The most advanced reusable transport ship, designed for heavy interplanetary missions.')}
+                                ${renderShip('Artemis Orion', 'NASA Deep Space Explorer', 'https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&q=80&w=1000', 'NASA flagship deep-space system, captured during a cinematic launch for lunar exploration.')}
+                                ${renderShip('Falcon Heavy', 'SpaceX Heavy Lift Rocket', 'https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?auto=format&fit=crop&q=80&w=1000', 'Reliable and powerful SpaceX heavy-lift launch vehicle for orbital deployment.')}
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'training':
+                    content.innerHTML = `
+                        <div class="max-w-4xl mx-auto space-y-20">
+                            <div class="text-center reveal">
+                                <h2 class="text-5xl font-black uppercase text-cyan-400">Mission Readiness</h2>
+                                <p class="text-slate-400 mt-4">Begin your transformation into a certified civilian spacefarer with our world-class facilities.</p>
+                            </div>
+                            <div class="space-y-12">
+                                ${renderStep('01', 'Atmospheric Conditioning', 'Endure hyper-gravity simulations in our centrifuge facilities.')}
+                                ${renderStep('02', 'Hydro-Weightlessness', 'Simulate zero-g maneuvers in the world-class Neutral Buoyancy Lab.')}
+                                ${renderStep('03', 'Launch Day Integration', 'Final psychological and physical clearance before orbital insertion.')}
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'booking':
+                    content.innerHTML = `
+                        <div class="max-w-4xl mx-auto glass p-12 reveal">
+                            <div class="flex items-center space-x-4 mb-10">
+                                <div class="w-12 h-12 bg-cyan-400 rounded-full flex items-center justify-center text-slate-900 shadow-[0_0_15px_#00f2ff]">
+                                    <i class="fas fa-check font-bold"></i>
+                                </div>
+                                <h2 class="text-4xl font-black uppercase text-white">Flight Manifest</h2>
+                            </div>
+                            <form class="space-y-8" onsubmit="event.preventDefault(); showSuccess();">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <input type="text" placeholder="Legal Full Name" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 outline-none focus:border-cyan-400 transition text-white" required>
+                                    <input type="email" placeholder="Orbital Email" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 outline-none focus:border-cyan-400 transition text-white" required>
+                                </div>
+                                <select class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 outline-none focus:border-cyan-400 transition text-white">
+                                    <option class="bg-slate-950">Orbit Station One (6-Hour Tour)</option>
+                                    <option class="bg-slate-950">Lunar Base Delta (3-Day Cruise)</option>
+                                    <option class="bg-slate-950">Mars Colony X (6-Month Trek)</option>
+                                    <option class="bg-slate-950">Europa Icy Depths (14-Month Trek)</option>
+                                    <option class="bg-slate-950">Saturn Ring View (2-Year Trek)</option>
+                                </select>
+                                <button type="submit" class="btn-primary w-full py-5 rounded-2xl font-bold uppercase tracking-[0.3em] text-white">Engage Launch Sequence</button>
+                            </form>
+                            <div id="msg" class="hidden mt-8 text-center p-6 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl text-cyan-400 font-bold">
+                                Reservation Signal Received. Flight coordinators will contact you shortly.
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            setTimeout(handleReveal, 100);
+        }
+
+        // Helper render components
+        function renderDest(name, time, price, img, desc) {
+            return `
+                <div class="glass overflow-hidden group reveal">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="${img}" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition duration-1000" 
+                             onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800'"
+                             loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent opacity-60"></div>
+                    </div>
+                    <div class="p-8 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-2xl font-bold text-white uppercase tracking-tighter">${name}</h4>
+                            <span class="text-[10px] font-bold text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-full uppercase tracking-widest">${time}</span>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed">${desc}</p>
+                        <div class="flex justify-between items-center pt-4 border-t border-white/5">
+                            <span class="text-xl font-black text-white">${price}</span>
+                            <i class="fas fa-chevron-right text-cyan-400 group-hover:translate-x-2 transition"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderShip(name, type, img, desc) {
+            return `
+                <div class="glass p-4 reveal group flex flex-col lg:flex-row gap-10">
+                    <div class="lg:w-1/2 overflow-hidden rounded-2xl h-80 relative shadow-2xl">
+                        <img src="${img}" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-700" 
+                             onerror="this.src='https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000'"
+                             loading="lazy">
+                        <div class="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    </div>
+                    <div class="lg:w-1/2 flex flex-col justify-center space-y-6 px-4">
+                        <h3 class="text-4xl font-black uppercase text-cyan-400 tracking-tight">${name}</h3>
+                        <p class="text-slate-400 leading-relaxed">${type}. ${desc}</p>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="px-4 py-2 bg-white/5 rounded-xl text-[10px] font-bold uppercase tracking-widest border border-white/10 text-white">Nuclear Thrusters</div>
+                            <div class="px-4 py-2 bg-white/5 rounded-xl text-[10px] font-bold uppercase tracking-widest border border-white/10 text-white">G-Stabilizer</div>
+                        </div>
+                        <button onclick="navigateTo('booking')" class="w-max text-xs uppercase font-bold tracking-widest border-b border-cyan-400 text-cyan-400 pb-1 hover:text-white hover:border-white transition">Secure Launch Slot</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStep(num, title, desc) {
+            return `
+                <div class="flex gap-10 items-start reveal">
+                    <div class="text-6xl font-black opacity-10 leading-none select-none text-cyan-400">${num}</div>
+                    <div class="space-y-2">
+                        <h4 class="text-2xl font-bold uppercase tracking-widest text-white">${title}</h4>
+                        <p class="text-slate-400 leading-relaxed">${desc}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('translate-x-full');
+        }
+
+        function showSuccess() {
+            document.getElementById('msg').classList.remove('hidden');
+            document.querySelector('form').classList.add('opacity-20', 'pointer-events-none');
+        }
+
+        window.onload = () => {
+            initBackground();
+            navigateTo('home');
+            handleReveal();
+        };
+    </script>
+</body>
+</html>
